@@ -9,7 +9,7 @@
   <title>Rivian Delivery QC Companion</title>
 
   <!-- PWA Web Manifest Inlined -->
-  <link rel="manifest" href="data:application/manifest+json;utf-8,%7B%22name%22%3A%22Rivian%20QC%20Companion%22%2C%22short_name%22%3A%22RivianQC%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230d1117%22%2C%22theme_color%22%3A%22%230d1117%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20100%20100'%3E%3Crect%20width%3D'100'%20height%3D'100'%20rx%3D'20'%20fill%3D'%23141f19'%2F%3E%3Cpolygon%20points%3D'50%2C15%2085%2C50%2050%2C85%2015%2C50'%20fill%3D'none'%20stroke%3D'%23e5a93c'%20stroke-width%3D'8'%2F%3E%3Ccircle%20cx%3D'50'%20cy%3D'50'%20r%3D'14'%20fill%3D'%23e5a93c'%2F%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22192x192%20512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D" />
+  <link rel="manifest" href="manifest.json" />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -72,6 +72,17 @@
       height: calc(var(--nav-bottom-clearance) + 100px);
     }
   </style>
+
+  <!-- Service Worker Registration for PWA Installation -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+          console.log('SW registration failed: ', err);
+        });
+      });
+    }
+  </script>
 </head>
 <body class="min-h-screen flex flex-col antialiased">
 
