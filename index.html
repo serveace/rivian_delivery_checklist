@@ -3,232 +3,598 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#0d1117" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0b0f0d" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Rivian Delivery QC Companion</title>
 
-  <!-- PWA Web Manifest Inlined -->
   <link rel="manifest" href="manifest.json" />
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            rivian: {
-              gold: '#E5A93C',
-              goldHover: '#c9922f',
-              forest: '#141F19',
-              dark: '#0B0F0D',
-              surface: '#18221D',
-              surfaceLight: '#233029',
-              border: '#2C3D34',
-              accent: '#2ED47A',
-              danger: '#E05353',
-              blocker: '#FF334B'
-            }
-          }
-        }
-      }
-    };
-  </script>
-
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
   <style>
-    /* Safe Area Inset Support & Hard Minimum for Android 3-Button Navigation Bar */
     :root {
+      --bg-dark: #0b0f0d;
+      --surface: #18221d;
+      --surface-light: #233029;
+      --border: #2c3d34;
+      --gold: #e5a93c;
+      --gold-hover: #c9922f;
+      --accent: #2ed47a;
+      --danger: #e05353;
+      --blocker: #ff334b;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
       --nav-bottom-clearance: max(88px, calc(68px + env(safe-area-inset-bottom, 0px)));
     }
-    body {
-      background-color: #0b0f0d;
-      color: #f3f4f6;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
       user-select: none;
     }
+
     input, textarea {
       user-select: text;
     }
-    .custom-scrollbar::-webkit-scrollbar {
-      height: 4px;
-      width: 4px;
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(11, 15, 13, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
     }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #2c3d34;
+
+    .container {
+      max-width: 768px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .title-row h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .badge-r1 {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 6px;
       border-radius: 4px;
+      background: rgba(229, 169, 60, 0.18);
+      color: var(--gold);
+      border: 1px solid rgba(229, 169, 60, 0.4);
     }
-    /* Fixed bottom navigation styling with strict bottom padding */
+
+    .status-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .dot-active {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-icon {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-icon:hover { color: #fff; }
+
+    .btn-report {
+      background: var(--gold);
+      color: #0b0f0d;
+      font-weight: 700;
+      font-size: 12px;
+      border: none;
+      padding: 7px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .progress-box {
+      margin-top: 10px;
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: var(--text-muted);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: var(--surface);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(44, 61, 52, 0.5);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      transition: width 0.3s ease;
+    }
+
+    .category-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-top: 10px;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+    .category-scroll::-webkit-scrollbar { display: none; }
+
+    .cat-btn {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cat-btn.active {
+      background: var(--gold);
+      color: #0b0f0d;
+      font-weight: 700;
+      border-color: var(--gold);
+    }
+
+    main {
+      flex: 1;
+      padding: 16px;
+    }
+
+    .items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .item-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      transition: all 0.2s ease;
+    }
+    .item-card.is-issue {
+      border-color: rgba(224, 83, 83, 0.7);
+      box-shadow: 0 4px 20px rgba(224, 83, 83, 0.15);
+    }
+    .item-card.is-pass {
+      border-color: rgba(46, 212, 122, 0.35);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .cat-tag {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: rgba(229, 169, 60, 0.9);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-top: 4px;
+    }
+
+    .status-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .badge-pass { background: rgba(46, 212, 122, 0.15); color: var(--accent); border: 1px solid rgba(46, 212, 122, 0.4); }
+    .badge-issue { background: rgba(224, 83, 83, 0.15); color: var(--danger); border: 1px solid rgba(224, 83, 83, 0.4); }
+    .badge-na { background: #374151; color: #d1d5db; }
+
+    .btn-group-toggle {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .toggle-btn {
+      padding: 10px 0;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .toggle-btn.active-pass { background: var(--accent); color: #0b0f0d; border-color: var(--accent); font-weight: 700; }
+    .toggle-btn.active-issue { background: var(--danger); color: #fff; border-color: var(--danger); font-weight: 700; }
+    .toggle-btn.active-na { background: #4b5563; color: #fff; border-color: #4b5563; font-weight: 700; }
+
+    .severity-bar {
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      background: rgba(11, 15, 13, 0.6);
+      border: 1px solid rgba(224, 83, 83, 0.3);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .severity-bar span { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+    .sev-pills { display: flex; gap: 6px; }
+    .sev-btn {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      background: var(--surface-light);
+      color: var(--text-muted);
+    }
+    .sev-btn.active-Cosmetic { background: #d1d5db; color: #111; font-weight: 700; }
+    .sev-btn.active-Moderate { background: var(--gold); color: #0b0f0d; font-weight: 700; }
+    .sev-btn.active-Blocker { background: var(--blocker); color: #fff; font-weight: 700; }
+
+    .notes-box {
+      margin-top: 10px;
+    }
+    .notes-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .notes-btns { display: flex; gap: 6px; }
+    .btn-tool {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-tool.recording { background: #7f1d1d; color: #fff; border-color: #ef4444; }
+
+    textarea {
+      width: 100%;
+      background: rgba(11, 15, 13, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: #fff;
+      resize: vertical;
+      outline: none;
+      font-family: inherit;
+    }
+    textarea:focus { border-color: var(--gold); }
+
+    .media-row {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .media-thumbs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      max-width: 60%;
+    }
+    .thumb-item {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .media-btns { display: flex; gap: 6px; }
+
+    /* HARD CLEARANCE FOR ANDROID 3-BUTTON SYSTEM NAVIGATION */
     .android-dock {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      background: rgba(11, 15, 13, 0.98);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 14px 16px;
       padding-bottom: var(--nav-bottom-clearance) !important;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.6);
     }
-    /* Main list spacer so items never collide with the dock */
+    .dock-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
     .android-scroll-spacer {
-      height: calc(var(--nav-bottom-clearance) + 100px);
+      height: calc(var(--nav-bottom-clearance) + 120px);
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(6px);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal-window {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 640px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 16px 20px;
+      background: rgba(11, 15, 13, 0.9);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      font-size: 13px;
+    }
+    .modal-footer {
+      padding: 14px 20px;
+      background: rgba(11, 15, 13, 0.9);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
   </style>
-
-  <!-- Service Worker Registration for PWA Installation -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => {
-          console.log('SW registration failed: ', err);
-        });
-      });
-    }
-  </script>
 </head>
-<body class="min-h-screen flex flex-col antialiased">
+<body>
 
-  <!-- TOP HEADER -->
-  <header class="sticky top-0 z-40 bg-rivian-dark/95 backdrop-blur-md border-b border-rivian-border px-4 py-3">
-    <div class="max-w-3xl mx-auto flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-rivian-surface border border-rivian-border flex items-center justify-center text-rivian-gold shadow-md">
-          <i data-lucide="compass" class="w-6 h-6 animate-pulse"></i>
-        </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <h1 class="text-base font-bold tracking-tight text-white">Rivian Delivery QC</h1>
-            <span class="text-[10px] font-semibold uppercase tracking-wider bg-rivian-gold/20 text-rivian-gold border border-rivian-gold/40 px-1.5 py-0.5 rounded">R1S / R1T</span>
+  <!-- HEADER -->
+  <header>
+    <div class="container">
+      <div class="header-top">
+        <div class="brand-wrap">
+          <div class="logo-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 19 21 12 17 5 21 12 2"></polygon>
+            </svg>
           </div>
-          <div class="flex items-center space-x-2 text-[11px] text-gray-400">
-            <span class="inline-block w-2 h-2 rounded-full bg-rivian-accent"></span>
-            <span id="db-status">IndexedDB Ready</span>
+          <div>
+            <div class="title-row">
+              <h1>Rivian Delivery QC</h1>
+              <span class="badge-r1">R1S / R1T</span>
+            </div>
+            <div class="status-sub">
+              <span class="dot-active"></span>
+              <span id="db-status">IndexedDB Offline-Ready</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Quick Action Controls -->
-      <div class="flex items-center space-x-2">
-        <button id="btn-export-json" title="Backup all notes & media to JSON" class="p-2 rounded-lg bg-rivian-surface border border-rivian-border text-gray-300 hover:text-white active:scale-95 transition">
-          <i data-lucide="download" class="w-4 h-4"></i>
-        </button>
-        <button id="btn-import-trigger" title="Restore from JSON" class="p-2 rounded-lg bg-rivian-surface border border-rivian-border text-gray-300 hover:text-white active:scale-95 transition">
-          <i data-lucide="upload" class="w-4 h-4"></i>
-        </button>
-        <input type="file" id="import-file-input" class="hidden" accept=".json" />
-        <button id="btn-open-report" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-rivian-gold text-rivian-dark font-semibold text-xs active:scale-95 transition shadow">
-          <i data-lucide="file-text" class="w-4 h-4"></i>
-          <span>Report</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- PROGRESS COUNTER BAR -->
-    <div class="max-w-3xl mx-auto mt-2.5">
-      <div class="flex justify-between items-center text-xs mb-1">
-        <span class="text-gray-400">Walkthrough Progress: <b id="stat-completed" class="text-white">0 / 31</b></span>
-        <div class="flex space-x-3 font-medium">
-          <span class="text-rivian-accent flex items-center space-x-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> <span id="stat-pass">0</span></span>
-          <span class="text-rivian-danger flex items-center space-x-1"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> <span id="stat-issues">0</span></span>
+        <div class="header-actions">
+          <button id="btn-export-json" title="Backup to JSON" class="btn-icon">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+          </button>
+          <button id="btn-import-trigger" title="Restore JSON" class="btn-icon">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path></svg>
+          </button>
+          <input type="file" id="import-file-input" style="display:none" accept=".json" />
+          <button id="btn-open-report" class="btn-report">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Report</span>
+          </button>
         </div>
       </div>
-      <div class="w-full h-1.5 bg-rivian-surface rounded-full overflow-hidden border border-rivian-border/50">
-        <div id="progress-bar-fill" class="h-full bg-gradient-to-r from-rivian-accent to-rivian-gold transition-all duration-300 w-0"></div>
-      </div>
-    </div>
 
-    <!-- CATEGORY PILLS TABS -->
-    <div class="max-w-3xl mx-auto mt-3 overflow-x-auto no-scrollbar py-1">
-      <div id="category-pills" class="flex space-x-2 text-xs whitespace-nowrap">
-        <!-- Rendered dynamically -->
+      <!-- PROGRESS TRACKER -->
+      <div class="progress-box">
+        <div class="progress-labels">
+          <span>Checked: <strong id="stat-completed" style="color:#fff;">0 / 31</strong></span>
+          <span style="display:flex; gap:12px;">
+            <span style="color:var(--accent);">✓ <span id="stat-pass">0</span></span>
+            <span style="color:var(--danger);">⚠ <span id="stat-issues">0</span></span>
+          </span>
+        </div>
+        <div class="progress-track">
+          <div id="progress-bar-fill" class="progress-bar"></div>
+        </div>
       </div>
+
+      <!-- CATEGORY TABS -->
+      <div id="category-pills" class="category-scroll"></div>
     </div>
   </header>
 
-  <!-- MAIN LIST CONTAINER -->
-  <main class="flex-1 max-w-3xl w-full mx-auto px-4 py-4 space-y-4">
-    <div id="checklist-items-container" class="space-y-4">
-      <!-- Item Cards Rendered Dynamically -->
-    </div>
-
-    <!-- Android 3-Button Clearance Spacer (Ensures bottom card scrolls completely clear) -->
-    <div class="android-scroll-spacer w-full"></div>
+  <!-- MAIN LIST -->
+  <main class="container">
+    <div id="checklist-items-container" class="items-list"></div>
+    <div class="android-scroll-spacer"></div>
   </main>
 
-  <!-- FIXED FLOATING BOTTOM DOCK (WITH EXPLICIT 3-BUTTON SYSTEM CLEARANCE) -->
-  <div class="fixed bottom-0 left-0 right-0 z-40 bg-rivian-dark/95 backdrop-blur-md border-t border-rivian-border pt-3.5 px-4 android-dock shadow-2xl">
-    <div class="max-w-3xl mx-auto flex items-center justify-between gap-3">
+  <!-- FIXED BOTTOM DOCK (HARD 3-BUTTON CLEARANCE) -->
+  <div class="android-dock">
+    <div class="container dock-inner">
       <div>
-        <div id="dock-issue-summary" class="text-xs font-semibold text-gray-200">0 Issues Flagged</div>
-        <div class="text-[11px] text-gray-400">Bethel Park Service Center Handoff</div>
+        <div id="dock-issue-summary" style="font-size:13px; font-weight:700; color:#fff;">0 Issues Flagged</div>
+        <div style="font-size:11px; color:var(--text-muted);">Bethel Park Service Center Handoff</div>
       </div>
-      <div class="flex items-center space-x-2">
-        <button id="btn-dock-filter-issues" class="px-3.5 py-2.5 rounded-xl border border-rivian-border bg-rivian-surface text-gray-200 text-xs font-medium flex items-center space-x-1.5 active:scale-95 transition">
-          <i data-lucide="filter" class="w-4 h-4 text-rivian-gold"></i>
+      <div style="display:flex; gap:8px;">
+        <button id="btn-dock-filter-issues" class="btn-tool" style="padding:10px 14px; font-size:12px; font-weight:600;">
           <span id="dock-filter-text">Filter Issues</span>
         </button>
-        <button id="btn-dock-report" class="px-5 py-2.5 rounded-xl bg-rivian-gold text-rivian-dark font-bold text-xs flex items-center space-x-2 shadow-lg active:scale-95 transition">
-          <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+        <button id="btn-dock-report" class="btn-report" style="padding:10px 16px;">
           <span>Handoff Summary</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- SPECIALIST SIGN-OFF REPORT MODAL -->
-  <div id="report-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-5">
-    <div class="bg-rivian-surface border border-rivian-border w-full max-w-2xl max-h-[90vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden">
-      <!-- Modal Header -->
-      <div class="px-5 py-4 border-b border-rivian-border flex items-center justify-between bg-rivian-dark/80">
+  <!-- SPECIALIST REPORT MODAL -->
+  <div id="report-modal" class="modal-overlay hidden">
+    <div class="modal-window">
+      <div class="modal-header">
         <div>
-          <h2 class="text-base font-bold text-white flex items-center space-x-2">
-            <i data-lucide="clipboard-list" class="w-5 h-5 text-rivian-gold"></i>
-            <span>Delivery Specialist Handoff Ticket</span>
-          </h2>
-          <p class="text-xs text-gray-400">Present this list to your Rivian Specialist before driving off</p>
+          <h2 style="font-size:15px; font-weight:700; color:#fff;">Delivery Specialist Handoff Ticket</h2>
+          <p style="font-size:11px; color:var(--text-muted);">Present this issue punch-list to Rivian before signing acceptance</p>
         </div>
-        <button id="btn-close-report" class="p-1.5 rounded-lg text-gray-400 hover:text-white bg-rivian-surfaceLight transition">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
+        <button id="btn-close-report" class="btn-icon" style="padding:4px 8px;">✕</button>
       </div>
-
-      <!-- Modal Body (Printable/Copyable) -->
-      <div id="report-modal-body" class="p-5 overflow-y-auto space-y-4 text-xs">
-        <!-- Injected via JS -->
-      </div>
-
-      <!-- Modal Footer -->
-      <div class="px-5 py-3.5 border-t border-rivian-border bg-rivian-dark/80 flex items-center justify-between gap-3">
-        <button id="btn-copy-ticket" class="px-4 py-2 rounded-lg bg-rivian-surfaceLight border border-rivian-border text-white font-medium flex items-center space-x-2 active:scale-95 transition">
-          <i data-lucide="copy" class="w-4 h-4 text-rivian-gold"></i>
-          <span id="copy-ticket-text">Copy Text Ticket</span>
+      <div id="report-modal-body" class="modal-body"></div>
+      <div class="modal-footer">
+        <button id="btn-copy-ticket" class="btn-tool" style="padding:8px 12px; font-weight:600;">
+          <span id="copy-ticket-text">📋 Copy Text Ticket</span>
         </button>
-        <div class="flex items-center space-x-2">
-          <button id="btn-print-report" class="px-4 py-2 rounded-lg bg-rivian-surfaceLight border border-rivian-border text-white font-medium flex items-center space-x-2 active:scale-95 transition">
-            <i data-lucide="printer" class="w-4 h-4"></i>
-            <span>Print / PDF</span>
-          </button>
-          <button id="btn-done-report" class="px-5 py-2 rounded-lg bg-rivian-gold text-rivian-dark font-bold active:scale-95 transition">
-            Close
-          </button>
+        <div style="display:flex; gap:8px;">
+          <button id="btn-print-report" class="btn-tool" style="padding:8px 12px;">🖨 Print / PDF</button>
+          <button id="btn-done-report" class="btn-report" style="padding:8px 16px;">Close</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MEDIA PREVIEW MODAL -->
-  <div id="media-modal" class="fixed inset-0 z-50 bg-black/95 hidden flex flex-col items-center justify-center p-4">
-    <button id="btn-close-media" class="absolute top-5 right-5 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition">
-      <i data-lucide="x" class="w-6 h-6"></i>
-    </button>
-    <div id="media-modal-container" class="max-w-3xl max-h-[80vh] flex items-center justify-center w-full"></div>
+  <!-- MEDIA MODAL -->
+  <div id="media-modal" class="modal-overlay hidden">
+    <div style="position:relative; max-width:90vw; max-height:85vh;">
+      <button id="btn-close-media" class="btn-icon" style="position:absolute; top:-40px; right:0; color:#fff;">✕ Close</button>
+      <div id="media-modal-container"></div>
+    </div>
   </div>
 
-  <!-- HIDDEN INPUTS FOR MEDIA CAPTURE -->
-  <input type="file" id="camera-photo-input" accept="image/*" capture="environment" class="hidden" />
-  <input type="file" id="camera-video-input" accept="video/*" capture="environment" class="hidden" />
+  <!-- HIDDEN INPUTS -->
+  <input type="file" id="camera-photo-input" accept="image/*" capture="environment" style="display:none" />
+  <input type="file" id="camera-video-input" accept="video/*" capture="environment" style="display:none" />
 
-  <!-- SCRIPT LOGIC -->
+  <!-- SCRIPTS -->
   <script>
-    // 1. DATA SCHEMA - ALL ITEMS INITIALIZED UNCHECKED (NULL STATUS)
     const CHECKLIST_CATEGORIES = [
       "1. Bring With You",
       "2. Trade-In Handover",
@@ -242,12 +608,10 @@
     ];
 
     const DEFAULT_ITEMS = [
-      // 1. Bring With You
       { id: "bw-1", category: "1. Bring With You", title: "Valid Driver's License", desc: "All registered co-owners must be present with unexpired physical government IDs." },
       { id: "bw-2", category: "1. Bring With You", title: "Smartphone with Rivian App logged in", desc: "Ready to pair Bluetooth digital phone key and confirm vehicle ownership transfer." },
       { id: "bw-3", category: "1. Bring With You", title: "Certified payment check (if applicable)", desc: "Only needed if an outstanding registration or state tax balance remains." },
 
-      // 2. Trade-In Handover
       { id: "ti-1", category: "2. Trade-In Handover", title: "Physical Vehicle Title or Lien Payoff Info", desc: "Original title ready to sign or lender account payoff letter." },
       { id: "ti-2", category: "2. Trade-In Handover", title: "Remove Windshield E-ZPass Toll Transponder", desc: "Unmount physical pass and remove old license plate from tolling account." },
       { id: "ti-3", category: "2. Trade-In Handover", title: "Pennsylvania License Plate Transfer / Surrender", desc: "Keep license plate for transfer to R1S or prepare to return to PennDOT." },
@@ -256,124 +620,99 @@
       { id: "ti-6", category: "2. Trade-In Handover", title: "Cabin & Cargo Deep Cleanout", desc: "Check glovebox, center console, sunglasses holder, and under cargo floorboard." },
       { id: "ti-7", category: "2. Trade-In Handover", title: "Lot Arrival Odometer & Fuel/Battery Photo", desc: "Photograph dashboard odometer and fuel/state-of-charge level when parking at Bethel Park." },
 
-      // 3. Paperwork & VIN
       { id: "pv-1", category: "3. Paperwork & VIN", title: "VIN Verification on Windshield & B-Pillar", desc: "Confirm stamped VIN at base of windshield and door jamb match purchase documents exactly." },
       { id: "pv-2", category: "3. Paperwork & VIN", title: "Configuration & Options Match", desc: "Confirm exterior paint, interior trim, wheel design, and included options match the window sticker." },
 
-      // 4. Exterior & Glass
       { id: "eg-1", category: "4. Exterior & Glass", title: "Body Paint, Seams & Panel Gaps", desc: "Inspect hood, doors, quarter panels, and bumpers in direct outdoor light for swirl marks, runs, or misalignments." },
       { id: "eg-2", category: "4. Exterior & Glass", title: "Windshield, Windows & Panoramic Glass Roof", desc: "Look closely for transit micro-chips, cracks, or seal rubber pinches around the panoramic roof." },
       { id: "eg-3", category: "4. Exterior & Glass", title: "Wheels, Tires & Valve Stem Caps", desc: "Check all 4 rims for transit curb rash; verify tire pressures and all 4 valve caps are present." },
       { id: "eg-4", category: "4. Exterior & Glass", title: "Underbody Shields & Aero Panels", desc: "Look underneath for loose splash guards, fluid drips, or transit scrapes on underbody armor." },
 
-      // 5. Doors & Cargo
       { id: "dc-1", category: "5. Doors & Cargo", title: "Flush Exterior Door Handles & Latches", desc: "Check flush handle presentation, smooth motorized retraction, and seamless door latching." },
       { id: "dc-2", category: "5. Doors & Cargo", title: "Powered Frunk Operation", desc: "Cycle front trunk open and close via center display, fob, and exterior front bumper button." },
       { id: "dc-3", category: "5. Doors & Cargo", title: "Split-Tailgate / Rear Liftgate", desc: "Test power upper liftgate and motorized lower drop tailgate; check for alignment rub." },
       { id: "dc-4", category: "5. Doors & Cargo", title: "Motorized Charge Port Door", desc: "Open/close charge port door; verify flush fit and tight rubber weather seals." },
 
-      // 6. Interior & Seating
       { id: "is-1", category: "6. Interior & Seating", title: "Seat Adjustments, Heating & Ventilation", desc: "Test all power lumbar, tilt, heat, and cooled ventilation controls on front seats." },
       { id: "is-2", category: "6. Interior & Seating", title: "2nd & 3rd Row Folding Mechanism", desc: "Fold and latch second and third row seats; ensure release handles and buttons operate smoothly." },
       { id: "is-3", category: "6. Interior & Seating", title: "Interior Trim, Leather Stitching & Headliner", desc: "Check wood dashboard trim, headliner fabric, stitching seams, and floor mats for blemishes." },
       { id: "is-4", category: "6. Interior & Seating", title: "All Power Windows & Mirror Fold/Tilt", desc: "Test one-touch auto up/down on all 4 windows and power folding/reverse-tilt on side mirrors." },
 
-      // 7. Tech & Lighting
       { id: "tl-1", category: "7. Tech & Lighting", title: "Phone-as-Key Pairing & Key Cards", desc: "Pair your smartphone with the Rivian app; verify NFC key card tap on driver B-pillar." },
       { id: "tl-2", category: "7. Tech & Lighting", title: "Driver & Center Touchscreens + 360 Cameras", desc: "Inspect screens for dead pixels and verify all 360-degree surround and blind-spot cameras." },
       { id: "tl-3", category: "7. Tech & Lighting", title: "Exterior Light Bars, Headlights & Turn Signals", desc: "Test front signature light bar, headlights, high beams, rear brake bar, and hazard signals." },
       { id: "tl-4", category: "7. Tech & Lighting", title: "Sound System, Bluetooth & Wireless Phone Charger", desc: "Stream audio across cabin speakers and verify dual wireless charging pad connection." },
 
-      // 8. Gear & Emergency
       { id: "ge-1", category: "8. Gear & Emergency", title: "Driver Door Rechargeable Flashlight", desc: "Push to release door flashlight; verify charge contacts and bright LED beam." },
       { id: "ge-2", category: "8. Gear & Emergency", title: "Removable Camp Speaker in Center Console", desc: "Eject camp speaker, verify standalone power and audio, re-dock and confirm charging latch." },
       { id: "ge-3", category: "8. Gear & Emergency", title: "Front Emergency Mechanical Door Pulls", desc: "Locate manual mechanical pull cables inside the front door pockets." },
       { id: "ge-4", category: "8. Gear & Emergency", title: "Air Compressor, 120V Outlets & Mobile Charger", desc: "Verify built-in cargo compressor with hose/kit, 120V bed/cargo outlets, and mobile charger kit." },
 
-      // 9. Acceptance Sign-off
       { id: "as-1", category: "9. Acceptance Sign-off", title: "Log Any Open Tickets with Specialist", desc: "Ensure your Rivian Delivery Specialist logs any identified cosmetic or alignment defects in their system before signing acceptance." }
     ];
 
-    // 2. INDEXEDDB PERSISTENCE ENGINE
-    const DB_NAME = "rivian_qc_db_v2";
+    const DB_NAME = "rivian_qc_db_v3";
     const DB_VERSION = 1;
     let dbInstance = null;
 
     function openDatabase() {
       return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-        request.onupgradeneeded = (e) => {
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = (e) => {
           const db = e.target.result;
-          if (!db.objectStoreNames.contains("items")) {
-            db.createObjectStore("items", { keyPath: "id" });
-          }
-          if (!db.objectStoreNames.contains("media")) {
-            db.createObjectStore("media", { keyPath: "mediaId" });
-          }
+          if (!db.objectStoreNames.contains("items")) db.createObjectStore("items", { keyPath: "id" });
+          if (!db.objectStoreNames.contains("media")) db.createObjectStore("media", { keyPath: "mediaId" });
         };
-        request.onsuccess = (e) => {
-          dbInstance = e.target.result;
-          resolve(dbInstance);
-        };
-        request.onerror = (e) => reject(e);
+        req.onsuccess = (e) => { dbInstance = e.target.result; resolve(dbInstance); };
+        req.onerror = (e) => reject(e);
       });
     }
 
     async function dbSaveItem(item) {
       if (!dbInstance) return;
-      return new Promise((resolve, reject) => {
+      return new Promise((res, rej) => {
         const tx = dbInstance.transaction("items", "readwrite");
-        const store = tx.objectStore("items");
-        store.put(item);
-        tx.oncomplete = () => resolve();
-        tx.onerror = (e) => reject(e);
+        tx.objectStore("items").put(item);
+        tx.oncomplete = () => res();
+        tx.onerror = (e) => rej(e);
       });
     }
 
-    async function dbSaveMedia(mediaObj) {
+    async function dbSaveMedia(m) {
       if (!dbInstance) return;
-      return new Promise((resolve, reject) => {
+      return new Promise((res, rej) => {
         const tx = dbInstance.transaction("media", "readwrite");
-        const store = tx.objectStore("media");
-        store.put(mediaObj);
-        tx.oncomplete = () => resolve();
-        tx.onerror = (e) => reject(e);
+        tx.objectStore("media").put(m);
+        tx.oncomplete = () => res();
+        tx.onerror = (e) => rej(e);
       });
     }
 
-    async function dbGetMedia(mediaId) {
+    async function dbGetMedia(id) {
       if (!dbInstance) return null;
-      return new Promise((resolve) => {
+      return new Promise((res) => {
         const tx = dbInstance.transaction("media", "readonly");
-        const store = tx.objectStore("media");
-        const req = store.get(mediaId);
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => resolve(null);
+        const req = tx.objectStore("media").get(id);
+        req.onsuccess = () => res(req.result);
+        req.onerror = () => res(null);
       });
     }
 
     async function dbGetAllItems() {
       if (!dbInstance) return [];
-      return new Promise((resolve) => {
+      return new Promise((res) => {
         const tx = dbInstance.transaction("items", "readonly");
-        const store = tx.objectStore("items");
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result || []);
-        req.onerror = () => resolve([]);
+        const req = tx.objectStore("items").getAll();
+        req.onsuccess = () => res(req.result || []);
+        req.onerror = () => res([]);
       });
     }
 
-    // 3. APPLICATION STATE
     let appItems = [];
     let activeCategory = "All";
     let filterIssuesOnly = false;
     let pendingMediaItemId = null;
-
-    // Speech-to-text dictation
     let activeSpeechRecognition = null;
-    let activeDictationItemId = null;
-
-    // Audio Voice Memo Recorder
     let mediaRecorder = null;
     let audioChunks = [];
     let recordingItemId = null;
@@ -381,455 +720,234 @@
     async function initApp() {
       try {
         await openDatabase();
-        const storedItems = await dbGetAllItems();
-        
-        if (storedItems && storedItems.length > 0) {
-          // Merge defaults with stored values to ensure full catalog
-          const storedMap = new Map(storedItems.map(item => [item.id, item]));
+        const stored = await dbGetAllItems();
+        if (stored && stored.length > 0) {
+          const storedMap = new Map(stored.map(i => [i.id, i]));
           appItems = DEFAULT_ITEMS.map(def => {
-            const saved = storedMap.get(def.id);
-            return saved ? { ...def, ...saved } : {
-              ...def,
-              status: null, // null | 'pass' | 'issue' | 'na'
-              severity: 'Cosmetic', // 'Cosmetic' | 'Moderate' | 'Blocker'
-              notes: '',
-              mediaIds: []
-            };
+            const s = storedMap.get(def.id);
+            return s ? { ...def, ...s } : { ...def, status: null, severity: 'Cosmetic', notes: '', mediaIds: [] };
           });
         } else {
-          // Clean initial slate - 100% unchecked
-          appItems = DEFAULT_ITEMS.map(def => ({
-            ...def,
-            status: null,
-            severity: 'Cosmetic',
-            notes: '',
-            mediaIds: []
-          }));
-          for (const item of appItems) {
-            await dbSaveItem(item);
-          }
+          appItems = DEFAULT_ITEMS.map(def => ({ ...def, status: null, severity: 'Cosmetic', notes: '', mediaIds: [] }));
+          for (const item of appItems) await dbSaveItem(item);
         }
-        document.getElementById("db-status").textContent = "IndexedDB Persistent";
+        document.getElementById("db-status").textContent = "IndexedDB Ready & Offline";
       } catch (err) {
-        console.warn("IndexedDB fallback to memory:", err);
-        appItems = DEFAULT_ITEMS.map(def => ({
-          ...def,
-          status: null,
-          severity: 'Cosmetic',
-          notes: '',
-          mediaIds: []
-        }));
+        appItems = DEFAULT_ITEMS.map(def => ({ ...def, status: null, severity: 'Cosmetic', notes: '', mediaIds: [] }));
       }
 
       renderCategoryPills();
       renderChecklist();
       updateHeaderStats();
       setupEventListeners();
-      lucide.createIcons();
     }
 
-    // RENDER CATEGORY TABS
     function renderCategoryPills() {
-      const container = document.getElementById("category-pills");
+      const c = document.getElementById("category-pills");
       const cats = ["All", ...CHECKLIST_CATEGORIES];
-
-      container.innerHTML = cats.map(cat => {
+      c.innerHTML = cats.map(cat => {
         const isActive = activeCategory === cat;
-        const count = cat === "All" 
-          ? appItems.length 
-          : appItems.filter(i => i.category === cat).length;
-
-        return `
-          <button 
-            data-cat="${cat}" 
-            class="px-3.5 py-1.5 rounded-full font-medium transition active:scale-95 flex items-center space-x-1.5 ${
-              isActive 
-                ? 'bg-rivian-gold text-rivian-dark font-bold shadow' 
-                : 'bg-rivian-surface border border-rivian-border text-gray-300 hover:text-white'
-            }">
-            <span>${cat}</span>
-            <span class="text-[10px] opacity-75">(${count})</span>
-          </button>
-        `;
+        const count = cat === "All" ? appItems.length : appItems.filter(i => i.category === cat).length;
+        return `<button data-cat="${cat}" class="cat-btn ${isActive ? 'active' : ''}"><span>${cat}</span> <span style="font-size:10px; opacity:0.8;">(${count})</span></button>`;
       }).join("");
 
-      container.querySelectorAll("button").forEach(btn => {
-        btn.onclick = () => {
-          activeCategory = btn.getAttribute("data-cat");
+      c.querySelectorAll("button").forEach(b => {
+        b.onclick = () => {
+          activeCategory = b.getAttribute("data-cat");
           renderCategoryPills();
           renderChecklist();
         };
       });
     }
 
-    // RENDER CHECKLIST ITEMS
     function renderChecklist() {
-      const container = document.getElementById("checklist-items-container");
-      
-      let filtered = appItems;
-      if (activeCategory !== "All") {
-        filtered = filtered.filter(i => i.category === activeCategory);
-      }
-      if (filterIssuesOnly) {
-        filtered = filtered.filter(i => i.status === "issue");
-      }
+      const c = document.getElementById("checklist-items-container");
+      let list = appItems;
+      if (activeCategory !== "All") list = list.filter(i => i.category === activeCategory);
+      if (filterIssuesOnly) list = list.filter(i => i.status === "issue");
 
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="text-center py-12 px-4 rounded-2xl bg-rivian-surface border border-rivian-border text-gray-400">
-            <i data-lucide="check-circle" class="w-12 h-12 mx-auto text-rivian-accent mb-2"></i>
-            <p class="font-medium text-white">No items found in this view</p>
-            <p class="text-xs text-gray-500 mt-1">Change category or toggle the issue filter</p>
-          </div>
-        `;
-        lucide.createIcons();
+      if (list.length === 0) {
+        c.innerHTML = `<div style="text-align:center; padding:40px; background:var(--surface); border:1px solid var(--border); border-radius:16px; color:var(--text-muted);"><p style="color:#fff; font-weight:600;">No items in this view</p></div>`;
         return;
       }
 
-      container.innerHTML = filtered.map(item => {
+      c.innerHTML = list.map(item => {
         const isPass = item.status === 'pass';
         const isIssue = item.status === 'issue';
         const isNA = item.status === 'na';
 
         return `
-          <div id="card-${item.id}" class="rounded-2xl p-4 transition-all duration-200 border ${
-            isIssue 
-              ? 'bg-rivian-surface border-rivian-danger/60 shadow-lg' 
-              : isPass 
-                ? 'bg-rivian-surface/90 border-rivian-accent/30' 
-                : 'bg-rivian-surface border-rivian-border'
-          }">
-            <!-- Top Item Label -->
-            <div class="flex items-start justify-between gap-3 mb-2.5">
+          <div class="item-card ${isIssue ? 'is-issue' : (isPass ? 'is-pass' : '')}">
+            <div class="card-top">
               <div>
-                <span class="text-[10px] uppercase font-bold tracking-wider text-rivian-gold/80 block mb-0.5">${item.category}</span>
-                <h3 class="text-sm font-bold text-white tracking-tight">${item.title}</h3>
-                <p class="text-xs text-gray-400 mt-0.5 leading-relaxed">${item.desc}</p>
+                <span class="cat-tag">${item.category}</span>
+                <div class="card-title">${item.title}</div>
+                <div class="card-desc">${item.desc}</div>
               </div>
-              <div class="status-indicator">
-                ${isPass ? '<span class="px-2 py-0.5 rounded-md bg-rivian-accent/20 text-rivian-accent border border-rivian-accent/40 text-[10px] font-bold">PASS</span>' : ''}
-                ${isIssue ? '<span class="px-2 py-0.5 rounded-md bg-rivian-danger/20 text-rivian-danger border border-rivian-danger/40 text-[10px] font-bold">ISSUE</span>' : ''}
-                ${isNA ? '<span class="px-2 py-0.5 rounded-md bg-gray-700 text-gray-300 text-[10px] font-bold">N/A</span>' : ''}
+              <div>
+                ${isPass ? '<span class="status-badge badge-pass">PASS</span>' : ''}
+                ${isIssue ? '<span class="status-badge badge-issue">ISSUE</span>' : ''}
+                ${isNA ? '<span class="status-badge badge-na">N/A</span>' : ''}
               </div>
             </div>
 
-            <!-- 3-State Toggle Buttons -->
-            <div class="grid grid-cols-3 gap-2 my-3">
-              <button onclick="setItemStatus('${item.id}', 'pass')" class="py-2 rounded-xl text-xs font-semibold flex items-center justify-center space-x-1.5 transition active:scale-95 border ${
-                isPass 
-                  ? 'bg-rivian-accent text-rivian-dark border-rivian-accent font-bold shadow' 
-                  : 'bg-rivian-surfaceLight border-rivian-border text-gray-300 hover:text-white'
-              }">
-                <i data-lucide="check" class="w-4 h-4"></i>
-                <span>Pass</span>
-              </button>
-
-              <button onclick="setItemStatus('${item.id}', 'issue')" class="py-2 rounded-xl text-xs font-semibold flex items-center justify-center space-x-1.5 transition active:scale-95 border ${
-                isIssue 
-                  ? 'bg-rivian-danger text-white border-rivian-danger font-bold shadow' 
-                  : 'bg-rivian-surfaceLight border-rivian-border text-gray-300 hover:text-white'
-              }">
-                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
-                <span>Issue</span>
-              </button>
-
-              <button onclick="setItemStatus('${item.id}', 'na')" class="py-2 rounded-xl text-xs font-semibold flex items-center justify-center space-x-1.5 transition active:scale-95 border ${
-                isNA 
-                  ? 'bg-gray-600 text-white border-gray-500 font-bold' 
-                  : 'bg-rivian-surfaceLight border-rivian-border text-gray-300 hover:text-white'
-              }">
-                <i data-lucide="minus" class="w-4 h-4"></i>
-                <span>N/A</span>
-              </button>
+            <div class="btn-group-toggle">
+              <button onclick="setItemStatus('${item.id}', 'pass')" class="toggle-btn ${isPass ? 'active-pass' : ''}">✓ Pass</button>
+              <button onclick="setItemStatus('${item.id}', 'issue')" class="toggle-btn ${isIssue ? 'active-issue' : ''}">⚠ Issue</button>
+              <button onclick="setItemStatus('${item.id}', 'na')" class="toggle-btn ${isNA ? 'active-na' : ''}">— N/A</button>
             </div>
 
-            <!-- Severity Selector (Shown if Issue) -->
             ${isIssue ? `
-              <div class="mb-3 p-2.5 rounded-xl bg-rivian-dark/60 border border-rivian-danger/30 flex items-center justify-between">
-                <span class="text-xs text-gray-300 font-medium">Issue Severity:</span>
-                <div class="flex space-x-1.5">
-                  ${['Cosmetic', 'Moderate', 'Blocker'].map(sev => `
-                    <button onclick="setItemSeverity('${item.id}', '${sev}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition ${
-                      item.severity === sev 
-                        ? (sev === 'Blocker' ? 'bg-rivian-blocker text-white font-bold' : (sev === 'Moderate' ? 'bg-rivian-gold text-rivian-dark font-bold' : 'bg-gray-300 text-gray-900 font-bold'))
-                        : 'bg-rivian-surfaceLight text-gray-400 hover:text-gray-200'
-                    }">
-                      ${sev}
-                    </button>
+              <div class="severity-bar">
+                <span>Severity:</span>
+                <div class="sev-pills">
+                  ${['Cosmetic', 'Moderate', 'Blocker'].map(s => `
+                    <button onclick="setItemSeverity('${item.id}', '${s}')" class="sev-btn ${item.severity === s ? 'active-' + s : ''}">${s}</button>
                   `).join('')}
                 </div>
               </div>
             ` : ''}
 
-            <!-- Notes & Voice Dictation Area -->
-            <div class="mt-2.5">
-              <div class="flex items-center justify-between mb-1 text-xs">
-                <span class="text-gray-400 flex items-center space-x-1"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i> <span>Notes & Observations:</span></span>
-                <div class="flex space-x-2">
-                  <button onclick="toggleDictation('${item.id}')" id="dictate-btn-${item.id}" class="text-[11px] px-2 py-0.5 rounded bg-rivian-surfaceLight border border-rivian-border text-gray-300 hover:text-white flex items-center space-x-1 active:scale-95">
-                    <i data-lucide="mic" class="w-3.5 h-3.5 text-rivian-gold"></i>
-                    <span>Dictate</span>
-                  </button>
-                  <button onclick="toggleVoiceMemo('${item.id}')" id="memo-btn-${item.id}" class="text-[11px] px-2 py-0.5 rounded bg-rivian-surfaceLight border border-rivian-border text-gray-300 hover:text-white flex items-center space-x-1 active:scale-95">
-                    <i data-lucide="radio" class="w-3.5 h-3.5 text-rivian-danger"></i>
-                    <span>Voice Memo</span>
-                  </button>
+            <div class="notes-box">
+              <div class="notes-header">
+                <span>Notes & Observations:</span>
+                <div class="notes-btns">
+                  <button id="dictate-btn-${item.id}" onclick="toggleDictation('${item.id}')" class="btn-tool">🎙 Dictate</button>
+                  <button id="memo-btn-${item.id}" onclick="toggleVoiceMemo('${item.id}')" class="btn-tool">📻 Voice Memo</button>
                 </div>
               </div>
-              <textarea 
-                rows="2" 
-                placeholder="Type observations, trade-in notes, or click Dictate..." 
-                oninput="updateItemNotes('${item.id}', this.value)"
-                class="w-full bg-rivian-dark/80 border border-rivian-border rounded-xl p-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-rivian-gold transition">${item.notes || ''}</textarea>
+              <textarea rows="2" placeholder="Tap dictate or type observations..." oninput="updateItemNotes('${item.id}', this.value)">${item.notes || ''}</textarea>
             </div>
 
-            <!-- Media Attachments Strip -->
-            <div class="mt-3 flex items-center justify-between">
-              <div id="media-strip-${item.id}" class="flex items-center space-x-2 overflow-x-auto max-w-[60%] py-1">
-                ${renderMediaThumbnails(item)}
-              </div>
-              <div class="flex space-x-1.5">
-                <button onclick="capturePhoto('${item.id}')" class="px-2.5 py-1.5 rounded-lg bg-rivian-surfaceLight border border-rivian-border text-gray-200 text-xs flex items-center space-x-1 hover:text-white active:scale-95">
-                  <i data-lucide="camera" class="w-3.5 h-3.5 text-rivian-gold"></i>
-                  <span>Take Photo</span>
-                </button>
-                <button onclick="captureVideo('${item.id}')" class="px-2.5 py-1.5 rounded-lg bg-rivian-surfaceLight border border-rivian-border text-gray-200 text-xs flex items-center space-x-1 hover:text-white active:scale-95">
-                  <i data-lucide="video" class="w-3.5 h-3.5 text-rivian-accent"></i>
-                  <span>Record Clip</span>
-                </button>
+            <div class="media-row">
+              <div class="media-thumbs">${(item.mediaIds && item.mediaIds.length) ? item.mediaIds.map(m => `<div onclick="viewMedia('${m}')" class="thumb-item">📷</div>`).join('') : '<span style="font-size:11px; color:#6b7280; font-style:italic;">No media</span>'}</div>
+              <div class="media-btns">
+                <button onclick="capturePhoto('${item.id}')" class="btn-tool">📷 Photo</button>
+                <button onclick="captureVideo('${item.id}')" class="btn-tool">🎥 Video</button>
               </div>
             </div>
           </div>
         `;
       }).join("");
-
-      lucide.createIcons();
     }
 
-    function renderMediaThumbnails(item) {
-      if (!item.mediaIds || item.mediaIds.length === 0) {
-        return `<span class="text-[11px] text-gray-500 italic">No media attached</span>`;
-      }
-      return item.mediaIds.map(mId => `
-        <div onclick="viewMedia('${mId}')" class="w-9 h-9 rounded-lg bg-rivian-dark border border-rivian-border overflow-hidden flex-shrink-0 cursor-pointer relative group flex items-center justify-center">
-          <i data-lucide="file-media" class="w-4 h-4 text-rivian-gold"></i>
-        </div>
-      `).join('');
-    }
-
-    // ITEM STATE ACTIONS
     window.setItemStatus = async (id, status) => {
-      const item = appItems.find(i => i.id === id);
-      if (!item) return;
-
-      // Toggle off if clicking the already active status
-      item.status = item.status === status ? null : status;
-      await dbSaveItem(item);
+      const it = appItems.find(i => i.id === id);
+      if (!it) return;
+      it.status = it.status === status ? null : status;
+      await dbSaveItem(it);
       renderChecklist();
       updateHeaderStats();
     };
 
-    window.setItemSeverity = async (id, severity) => {
-      const item = appItems.find(i => i.id === id);
-      if (!item) return;
-      item.severity = severity;
-      await dbSaveItem(item);
+    window.setItemSeverity = async (id, s) => {
+      const it = appItems.find(i => i.id === id);
+      if (!it) return;
+      it.severity = s;
+      await dbSaveItem(it);
       renderChecklist();
     };
 
-    window.updateItemNotes = async (id, text) => {
-      const item = appItems.find(i => i.id === id);
-      if (!item) return;
-      item.notes = text;
-      await dbSaveItem(item);
+    window.updateItemNotes = async (id, txt) => {
+      const it = appItems.find(i => i.id === id);
+      if (!it) return;
+      it.notes = txt;
+      await dbSaveItem(it);
     };
 
-    // SPEECH DICTATION
     window.toggleDictation = (id) => {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        alert("Speech-to-text is not supported on this browser. Please type notes directly.");
-        return;
-      }
-
+      const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!Speech) { alert("Speech-to-text is not supported on this browser."); return; }
       const btn = document.getElementById(`dictate-btn-${id}`);
-
       if (activeSpeechRecognition) {
         activeSpeechRecognition.stop();
         activeSpeechRecognition = null;
-        if (btn) btn.classList.remove('bg-red-900', 'text-white');
+        if (btn) btn.classList.remove('recording');
         return;
       }
-
-      const recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = false;
-      recognition.lang = 'en-US';
-
-      recognition.onstart = () => {
-        if (btn) {
-          btn.classList.add('bg-red-900', 'text-white');
-          btn.innerHTML = `<i data-lucide="square" class="w-3.5 h-3.5 text-white"></i><span>Stop</span>`;
-          lucide.createIcons();
-        }
-      };
-
-      recognition.onresult = async (event) => {
-        const item = appItems.find(i => i.id === id);
-        if (!item) return;
-        const transcript = event.results[event.results.length - 1][0].transcript;
-        item.notes = (item.notes ? item.notes + ' ' : '') + transcript;
-        await dbSaveItem(item);
+      const rec = new Speech();
+      rec.continuous = true;
+      rec.lang = 'en-US';
+      rec.onstart = () => { if (btn) { btn.classList.add('recording'); btn.textContent = '⏹ Stop'; } };
+      rec.onresult = async (e) => {
+        const it = appItems.find(i => i.id === id);
+        if (!it) return;
+        it.notes = (it.notes ? it.notes + ' ' : '') + e.results[e.results.length - 1][0].transcript;
+        await dbSaveItem(it);
         renderChecklist();
       };
-
-      recognition.onerror = () => {
-        recognition.stop();
-        activeSpeechRecognition = null;
-        renderChecklist();
-      };
-
-      recognition.onend = () => {
-        activeSpeechRecognition = null;
-        renderChecklist();
-      };
-
-      activeSpeechRecognition = recognition;
-      recognition.start();
+      rec.onerror = () => { rec.stop(); activeSpeechRecognition = null; renderChecklist(); };
+      rec.onend = () => { activeSpeechRecognition = null; renderChecklist(); };
+      activeSpeechRecognition = rec;
+      rec.start();
     };
 
-    // AUDIO VOICE MEMO RECORDER
     window.toggleVoiceMemo = async (id) => {
       const btn = document.getElementById(`memo-btn-${id}`);
-
-      if (mediaRecorder && mediaRecorder.state === "recording") {
-        mediaRecorder.stop();
-        return;
-      }
-
+      if (mediaRecorder && mediaRecorder.state === "recording") { mediaRecorder.stop(); return; }
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream);
         audioChunks = [];
         recordingItemId = id;
-
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) audioChunks.push(e.data);
-        };
-
-        mediaRecorder.onstart = () => {
-          if (btn) {
-            btn.classList.add('bg-red-900', 'text-white');
-            btn.innerHTML = `<i data-lucide="square" class="w-3.5 h-3.5 text-white"></i><span>Stop Rec</span>`;
-            lucide.createIcons();
-          }
-        };
-
+        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.onstart = () => { if (btn) { btn.classList.add('recording'); btn.textContent = '⏹ Stop Rec'; } };
         mediaRecorder.onstop = async () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          const blob = new Blob(audioChunks, { type: 'audio/webm' });
           const reader = new FileReader();
           reader.onloadend = async () => {
-            const base64data = reader.result;
-            const mediaId = "memo-" + Date.now();
-            await dbSaveMedia({
-              mediaId,
-              itemId: recordingItemId,
-              type: 'audio',
-              data: base64data,
-              timestamp: new Date().toISOString()
-            });
-
-            const item = appItems.find(i => i.id === recordingItemId);
-            if (item) {
-              item.mediaIds = item.mediaIds || [];
-              item.mediaIds.push(mediaId);
-              await dbSaveItem(item);
+            const mId = "memo-" + Date.now();
+            await dbSaveMedia({ mediaId: mId, itemId: recordingItemId, type: 'audio', data: reader.result });
+            const it = appItems.find(i => i.id === recordingItemId);
+            if (it) {
+              it.mediaIds = it.mediaIds || [];
+              it.mediaIds.push(mId);
+              await dbSaveItem(it);
             }
             renderChecklist();
           };
-          reader.readAsDataURL(audioBlob);
+          reader.readAsDataURL(blob);
           stream.getTracks().forEach(t => t.stop());
         };
-
         mediaRecorder.start();
-      } catch (err) {
-        alert("Microphone permission denied or unsupported.");
-      }
+      } catch (err) { alert("Microphone access denied or unavailable."); }
     };
 
-    // PHOTO & VIDEO HOOKS
-    window.capturePhoto = (id) => {
-      pendingMediaItemId = id;
-      document.getElementById("camera-photo-input").click();
-    };
+    window.capturePhoto = (id) => { pendingMediaItemId = id; document.getElementById("camera-photo-input").click(); };
+    window.captureVideo = (id) => { pendingMediaItemId = id; document.getElementById("camera-video-input").click(); };
 
-    window.captureVideo = (id) => {
-      pendingMediaItemId = id;
-      document.getElementById("camera-video-input").click();
-    };
+    document.getElementById("camera-photo-input").onchange = (e) => saveMediaFile(e.target.files[0], 'image');
+    document.getElementById("camera-video-input").onchange = (e) => saveMediaFile(e.target.files[0], 'video');
 
-    document.getElementById("camera-photo-input").onchange = (e) => {
-      const file = e.target.files[0];
+    function saveMediaFile(file, type) {
       if (!file || !pendingMediaItemId) return;
-      saveFileMedia(file, 'image', pendingMediaItemId);
-    };
-
-    document.getElementById("camera-video-input").onchange = (e) => {
-      const file = e.target.files[0];
-      if (!file || !pendingMediaItemId) return;
-      saveFileMedia(file, 'video', pendingMediaItemId);
-    };
-
-    function saveFileMedia(file, type, itemId) {
       const reader = new FileReader();
       reader.onloadend = async () => {
-        const mediaId = "media-" + Date.now();
-        await dbSaveMedia({
-          mediaId,
-          itemId,
-          type,
-          data: reader.result,
-          timestamp: new Date().toISOString()
-        });
-
-        const item = appItems.find(i => i.id === itemId);
-        if (item) {
-          item.mediaIds = item.mediaIds || [];
-          item.mediaIds.push(mediaId);
-          await dbSaveItem(item);
+        const mId = "media-" + Date.now();
+        await dbSaveMedia({ mediaId: mId, itemId: pendingMediaItemId, type: type, data: reader.result });
+        const it = appItems.find(i => i.id === pendingMediaItemId);
+        if (it) {
+          it.mediaIds = it.mediaIds || [];
+          it.mediaIds.push(mId);
+          await dbSaveItem(it);
         }
         renderChecklist();
       };
       reader.readAsDataURL(file);
     }
 
-    window.viewMedia = async (mediaId) => {
-      const media = await dbGetMedia(mediaId);
-      if (!media) return;
-
-      const container = document.getElementById("media-modal-container");
-      if (media.type === 'image') {
-        container.innerHTML = `<img src="${media.data}" class="max-h-[80vh] max-w-full rounded-xl object-contain border border-rivian-border shadow-2xl" />`;
-      } else if (media.type === 'video') {
-        container.innerHTML = `<video controls autoplay src="${media.data}" class="max-h-[80vh] max-w-full rounded-xl border border-rivian-border shadow-2xl"></video>`;
-      } else if (media.type === 'audio') {
-        container.innerHTML = `
-          <div class="p-6 rounded-2xl bg-rivian-surface border border-rivian-border text-center">
-            <i data-lucide="mic" class="w-12 h-12 text-rivian-gold mx-auto mb-4"></i>
-            <audio controls autoplay src="${media.data}" class="w-full"></audio>
-          </div>
-        `;
-      }
+    window.viewMedia = async (mId) => {
+      const m = await dbGetMedia(mId);
+      if (!m) return;
+      const c = document.getElementById("media-modal-container");
+      if (m.type === 'image') c.innerHTML = `<img src="${m.data}" style="max-width:90vw; max-height:80vh; border-radius:12px; border:1px solid var(--border);" />`;
+      else if (m.type === 'video') c.innerHTML = `<video controls autoplay src="${m.data}" style="max-width:90vw; max-height:80vh; border-radius:12px;"></video>`;
+      else if (m.type === 'audio') c.innerHTML = `<div style="background:var(--surface); padding:24px; border-radius:16px; border:1px solid var(--border);"><audio controls autoplay src="${m.data}"></audio></div>`;
       document.getElementById("media-modal").classList.remove("hidden");
-      lucide.createIcons();
     };
 
-    document.getElementById("btn-close-media").onclick = () => {
-      document.getElementById("media-modal").classList.add("hidden");
-      document.getElementById("media-modal-container").innerHTML = "";
-    };
+    document.getElementById("btn-close-media").onclick = () => document.getElementById("media-modal").classList.add("hidden");
 
-    // STATS UPDATE
     function updateHeaderStats() {
       const completed = appItems.filter(i => i.status !== null).length;
       const total = appItems.length;
@@ -840,66 +958,34 @@
       document.getElementById("stat-pass").textContent = passes;
       document.getElementById("stat-issues").textContent = issues;
       document.getElementById("dock-issue-summary").textContent = `${issues} Issue${issues === 1 ? '' : 's'} Flagged`;
-
-      const pct = Math.round((completed / total) * 100);
-      document.getElementById("progress-bar-fill").style.width = `${pct}%`;
+      document.getElementById("progress-bar-fill").style.width = `${Math.round((completed / total) * 100)}%`;
     }
 
-    // SPECIALIST HANDOFF REPORT GENERATION
     function openReportModal() {
       const issues = appItems.filter(i => i.status === 'issue');
-      const passes = appItems.filter(i => i.status === 'pass');
-      const body = document.getElementById("report-modal-body");
-
-      body.innerHTML = `
-        <div class="p-4 rounded-xl bg-rivian-dark border border-rivian-border mb-3">
-          <div class="flex justify-between items-center text-xs">
-            <span class="text-gray-400">Delivery Location:</span>
-            <span class="text-white font-bold">Bethel Park Service Center (1700 Oxford Dr)</span>
-          </div>
-          <div class="flex justify-between items-center text-xs mt-1">
-            <span class="text-gray-400">Vehicle:</span>
-            <span class="text-rivian-gold font-bold">Rivian R1S</span>
-          </div>
-          <div class="flex justify-between items-center text-xs mt-1">
-            <span class="text-gray-400">Inspection Summary:</span>
-            <span class="text-white">${issues.length} Issues Flagged | ${passes.length} Passed</span>
-          </div>
+      const b = document.getElementById("report-modal-body");
+      b.innerHTML = `
+        <div style="background:var(--bg-dark); padding:12px 16px; border-radius:12px; border:1px solid var(--border); line-height:1.6;">
+          <div><strong style="color:var(--text-muted);">Location:</strong> Bethel Park Service Center (1700 Oxford Dr)</div>
+          <div><strong style="color:var(--text-muted);">Vehicle:</strong> Rivian R1S</div>
+          <div><strong style="color:var(--text-muted);">Issues Flagged:</strong> <span style="color:${issues.length ? 'var(--danger)' : 'var(--accent)'}; font-weight:700;">${issues.length}</span></div>
         </div>
-
-        ${issues.length === 0 ? `
-          <div class="p-6 text-center text-gray-400 bg-rivian-dark/40 rounded-xl border border-rivian-border">
-            <i data-lucide="check-circle" class="w-10 h-10 text-rivian-accent mx-auto mb-2"></i>
-            <p class="font-bold text-white text-sm">Clean Walkthrough!</p>
-            <p class="text-xs text-gray-400 mt-1">No defects or issues flagged. Ready for acceptance sign-off.</p>
+        ${issues.length === 0 ? '<div style="text-align:center; padding:24px; color:var(--accent); font-weight:700;">Zero defects flagged. All inspected items passed!</div>' : issues.map((iss, idx) => `
+          <div style="background:var(--bg-dark); padding:12px; border-radius:12px; border:1px solid rgba(224,83,83,0.4);">
+            <div style="display:flex; justify-content:space-between; font-weight:700; color:#fff;">
+              <span>${idx + 1}. ${iss.title}</span>
+              <span style="color:${iss.severity === 'Blocker' ? 'var(--blocker)' : 'var(--gold)'}; font-size:11px;">[${iss.severity}]</span>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${iss.category}</div>
+            <div style="font-size:12px; color:#fca5a5; margin-top:6px; background:rgba(224,83,83,0.1); padding:8px; border-radius:6px;">
+              <strong>Note:</strong> ${iss.notes || 'Cosmetic / fit defect observed during walkthrough.'}
+            </div>
           </div>
-        ` : `
-          <div class="space-y-3">
-            <h4 class="text-xs font-bold text-gray-300 uppercase tracking-wider">Identified Items Requiring Ticket Entry:</h4>
-            ${issues.map((iss, idx) => `
-              <div class="p-3.5 rounded-xl bg-rivian-dark border border-rivian-danger/40 space-y-1">
-                <div class="flex items-center justify-between">
-                  <span class="font-bold text-white text-xs">${idx + 1}. ${iss.title}</span>
-                  <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
-                    iss.severity === 'Blocker' ? 'bg-rivian-blocker text-white' : (iss.severity === 'Moderate' ? 'bg-rivian-gold text-rivian-dark' : 'bg-gray-300 text-gray-900')
-                  }">${iss.severity}</span>
-                </div>
-                <div class="text-[11px] text-gray-400">${iss.category}</div>
-                <div class="text-xs text-rivian-danger mt-1 bg-rivian-danger/10 p-2 rounded-lg">
-                  <b>Notes:</b> ${iss.notes ? iss.notes : 'Cosmetic/alignment issue noted during lot walkthrough.'}
-                </div>
-                ${iss.mediaIds && iss.mediaIds.length > 0 ? `<div class="text-[10px] text-rivian-gold font-medium mt-1">📷 ${iss.mediaIds.length} media evidence file(s) attached</div>` : ''}
-              </div>
-            `).join('')}
-          </div>
-        `}
+        `).join('')}
       `;
-
       document.getElementById("report-modal").classList.remove("hidden");
-      lucide.createIcons();
     }
 
-    // EVENT LISTENERS & BACKUP
     function setupEventListeners() {
       document.getElementById("btn-open-report").onclick = openReportModal;
       document.getElementById("btn-dock-report").onclick = openReportModal;
@@ -908,86 +994,60 @@
 
       document.getElementById("btn-dock-filter-issues").onclick = () => {
         filterIssuesOnly = !filterIssuesOnly;
-        const btn = document.getElementById("btn-dock-filter-issues");
-        const txt = document.getElementById("dock-filter-text");
-        if (filterIssuesOnly) {
-          btn.classList.add("bg-rivian-gold", "text-rivian-dark", "font-bold");
-          btn.classList.remove("bg-rivian-surface", "text-gray-200");
-          txt.textContent = "Showing Issues";
-        } else {
-          btn.classList.remove("bg-rivian-gold", "text-rivian-dark", "font-bold");
-          btn.classList.add("bg-rivian-surface", "text-gray-200");
-          txt.textContent = "Filter Issues";
-        }
+        document.getElementById("dock-filter-text").textContent = filterIssuesOnly ? "Show All Items" : "Filter Issues";
         renderChecklist();
       };
 
       document.getElementById("btn-copy-ticket").onclick = () => {
         const issues = appItems.filter(i => i.status === 'issue');
-        let text = "RIVIAN DELIVERY HANDOFF ISSUES - BETHEL PARK SERVICE CENTER\n";
-        text += "Date: November 7, 2026\n\n";
-        if (issues.length === 0) {
-          text += "Zero defects flagged. Vehicle accepted in clean condition.";
-        } else {
-          issues.forEach((iss, i) => {
-            text += `${i + 1}. [${iss.severity.toUpperCase()}] ${iss.title}\n`;
-            text += `   Category: ${iss.category}\n`;
-            text += `   Notes: ${iss.notes || 'Identified during pre-drive lot walkthrough'}\n\n`;
-          });
-        }
-        navigator.clipboard.writeText(text).then(() => {
-          const btnText = document.getElementById("copy-ticket-text");
-          btnText.textContent = "Copied to Clipboard!";
-          setTimeout(() => btnText.textContent = "Copy Text Ticket", 2500);
+        let t = "RIVIAN DELIVERY HANDOFF PUNCHLIST - BETHEL PARK\nDate: November 7, 2026\n\n";
+        if (!issues.length) t += "Vehicle inspected with zero issues flagged.";
+        else issues.forEach((iss, i) => {
+          t += `${i+1}. [${iss.severity.toUpperCase()}] ${iss.title}\n`;
+          t += `   Category: ${iss.category}\n`;
+          t += `   Notes: ${iss.notes || 'Identified during lot walkthrough'}\n\n`;
+        });
+        navigator.clipboard.writeText(t).then(() => {
+          document.getElementById("copy-ticket-text").textContent = "✓ Copied to Clipboard!";
+          setTimeout(() => document.getElementById("copy-ticket-text").textContent = "📋 Copy Text Ticket", 2000);
         });
       };
 
       document.getElementById("btn-print-report").onclick = () => window.print();
 
-      // JSON BACKUP EXPORT
-      document.getElementById("btn-export-json").onclick = async () => {
-        const backupData = {
-          exportDate: new Date().toISOString(),
-          vehicle: "Rivian R1S",
-          location: "Bethel Park Service Center",
-          items: appItems
-        };
-        const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
+      document.getElementById("btn-export-json").onclick = () => {
+        const data = { date: new Date().toISOString(), vehicle: "Rivian R1S", items: appItems };
         const a = document.createElement("a");
-        a.href = url;
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
         a.download = `rivian-qc-backup-${new Date().toISOString().slice(0, 10)}.json`;
         a.click();
-        URL.revokeObjectURL(url);
       };
 
-      // JSON RESTORE TRIGGER
-      document.getElementById("btn-import-trigger").onclick = () => {
-        document.getElementById("import-file-input").click();
-      };
-
+      document.getElementById("btn-import-trigger").onclick = () => document.getElementById("import-file-input").click();
       document.getElementById("import-file-input").onchange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+        const f = e.target.files[0];
+        if (!f) return;
         const reader = new FileReader();
         reader.onload = async (evt) => {
           try {
-            const data = JSON.parse(evt.target.result);
-            if (data.items && Array.isArray(data.items)) {
-              for (const it of data.items) {
-                await dbSaveItem(it);
-              }
+            const parsed = JSON.parse(evt.target.result);
+            if (parsed.items && Array.isArray(parsed.items)) {
+              for (const it of parsed.items) await dbSaveItem(it);
               location.reload();
             }
-          } catch (err) {
-            alert("Invalid backup JSON file.");
-          }
+          } catch (err) { alert("Invalid backup JSON file."); }
         };
-        reader.readAsText(file);
+        reader.readAsText(f);
       };
     }
 
-    // Initialize application on load
+    // Register simple Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(console.error);
+      });
+    }
+
     window.addEventListener("DOMContentLoaded", initApp);
   </script>
 </body>
